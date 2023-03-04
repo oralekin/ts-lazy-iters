@@ -99,6 +99,10 @@ export default abstract class CIterator<I> {
     return new CChain(this, other)
   }
 
+  intersperse(seperator: I) {
+    return new CIntersperse(this, seperator);
+  }
+
 }
 
 export class CFlatMap<S, I> extends CIterator<I> {
@@ -265,4 +269,37 @@ export class CChain<I> extends CIterator<I> {
     }
     return next;
   }
+}
+
+export class CIntersperse<I> extends CIterator<I> {
+
+  private source: CIterator<I>;
+  private _nextItem: Maybe<I>;
+  private seperator: I;
+
+  private isSeperatorNext = false;
+
+  constructor(source: CIterator<I>, seperator: I) {
+    super();
+    this.seperator = seperator;
+    this.source = source;
+    this._nextItem = this.source.next();
+  }
+
+  next(): Maybe<I> {
+    // no element if source has ended.
+    if (this._nextItem.isNone) return none();
+
+    this.isSeperatorNext = !this.isSeperatorNext;
+    if (!this.isSeperatorNext) {
+      // seperator time
+      return some(this.seperator);
+    } else {
+      // next time
+      const ret = this._nextItem;
+      this._nextItem = this.source.next();
+      return ret;
+    }
+  }
+
 }

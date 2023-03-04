@@ -126,6 +126,18 @@ describe("transformers", () => {
     const iter = range(0, 3).chain(range(0, 3));
     expect(iter.collect_as(new CArray<number>())).toStrictEqual(new CArray(0,1,2,0,1,2));
     expect(iter.next()).toStrictEqual(none());
+  });
+
+  test("intersperse works", () => {
+    const iter = range(0,3).map(n => `#${n}`).intersperse("btwn");
+    expect(iter.next().unwrap()).toBe("#0");
+    expect(iter.next().unwrap()).toBe("btwn");
+    expect(iter.next().unwrap()).toBe("#1");
+    expect(iter.next().unwrap()).toBe("btwn");
+    expect(iter.next().unwrap()).toBe("#2");
+    expect(iter.next()).toStrictEqual(none());
+    expect(iter.next()).toStrictEqual(none());
+
   })
 });
 
