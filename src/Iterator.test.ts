@@ -199,4 +199,9 @@ describe("consumers", () => {
     iter.forEach(fn);
     expect(fn).toBeCalledTimes(10);
   });
+
+  test("count works", () => {
+    const iter = range(0).take(10);
+    expect(iter.count()).toBe(10);
+  });
 });

@@ -65,6 +65,16 @@ export default abstract class CIterator<I> {
 
   }
 
+  count(): number {
+    let count = 0;
+    let cur = this.next();
+    while (cur.isSome) {
+      count++;
+      cur = this.next();
+    }
+    return count;
+  }
+
 
 
   map<U>(f: (value: I) => U): CMap<I, U> {
