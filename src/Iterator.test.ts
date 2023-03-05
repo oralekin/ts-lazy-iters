@@ -23,28 +23,30 @@ describe("transformers", () => {
     expect(iter.next()).toStrictEqual(none());
   });
 
-  test("filter works", () => {
-    const iter = range(0)
-      .filter((v) => v % 2 === 0)
-      .take(10);
+  describe("filter", () => {
+    test("works", () => {
+      const iter = range(0)
+        .filter((v) => v % 2 === 0)
+        .take(10);
 
-    for (let i = 0; i < 10; i++) {
-      expect(iter.next().unwrap()).toStrictEqual(i * 2);
-    }
-    expect(iter.next()).toStrictEqual(none());
+      for (let i = 0; i < 10; i++) {
+        expect(iter.next().unwrap()).toStrictEqual(i * 2);
+      }
+      expect(iter.next()).toStrictEqual(none());
+    });
+
+    test("works on finite iterator", () => {
+      const iter = range(0)
+        .take(10)
+        .filter((v) => v % 2 === 0);
+
+      for (let i = 0; i < 5; i++) {
+        expect(iter.next().unwrap()).toStrictEqual(i * 2);
+      }
+      expect(iter.next()).toStrictEqual(none());
+    });
   });
-
-  test("filter works on finite iterator", () => {
-    const iter = range(0)
-      .take(10)
-      .filter((v) => v % 2 === 0);
-
-    for (let i = 0; i < 5; i++) {
-      expect(iter.next().unwrap()).toStrictEqual(i * 2);
-    }
-    expect(iter.next()).toStrictEqual(none());
-  });
-
+  
   describe("zip", () => {
     test("works", () => {
       const iter = range(0)
@@ -124,12 +126,16 @@ describe("transformers", () => {
 
   test("chain works", () => {
     const iter = range(0, 3).chain(range(0, 3));
-    expect(iter.collect_as(new CArray<number>())).toStrictEqual(new CArray(0,1,2,0,1,2));
+    expect(iter.collect_as(new CArray<number>())).toStrictEqual(
+      new CArray(0, 1, 2, 0, 1, 2)
+    );
     expect(iter.next()).toStrictEqual(none());
   });
 
   test("intersperse works", () => {
-    const iter = range(0,3).map(n => `#${n}`).intersperse("btwn");
+    const iter = range(0, 3)
+      .map((n) => `#${n}`)
+      .intersperse("btwn");
     expect(iter.next().unwrap()).toBe("#0");
     expect(iter.next().unwrap()).toBe("btwn");
     expect(iter.next().unwrap()).toBe("#1");
@@ -137,8 +143,7 @@ describe("transformers", () => {
     expect(iter.next().unwrap()).toBe("#2");
     expect(iter.next()).toStrictEqual(none());
     expect(iter.next()).toStrictEqual(none());
-
-  })
+  });
 });
 
 describe("consumers", () => {
